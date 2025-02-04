@@ -8,7 +8,6 @@ import compute.hamiltonian as hamiltonian
 
 importlib.reload(hamiltonian)
 
-#make it a class and remove everything form compute
 class MESH:
     def __init__(self, n: int, m: list, h: list, e: list, r: float, theta_min: float, theta_max: float, phi_min: float, phi_max: float, mesh: np.ndarray = None, delta_theta: float = None, delta_phi: float = None, q: int = None, p: int = None, axis: list = []) -> None:
         '''Creates an angle MESH object either from another mesh or from a map of polar space
@@ -122,7 +121,6 @@ class MESH:
             ax2.set_title('phase as function of theta and phi')
             ax2.set_xlabel('phi')
             ax2.set_ylabel('theta')
-            #ax2.set_zlabel('phase')
         
         elif dimensions == 2:
             up = self.getMesh()[:, :, 0]
@@ -135,7 +133,6 @@ class MESH:
             ax1[1].set_title('phase of up component as function of theta and phi')
             ax1[1].set_xlabel('phi')
             ax1[1].set_ylabel('theta')
-            #ax1[1].set_zlabel('phase')
 
             down = self.getMesh()[:, :, 1]
             ax2[0].plot_surface(X, Y, np.abs(down), cmap='viridis')
@@ -147,7 +144,6 @@ class MESH:
             ax2[1].set_title('phase of down component as function of theta and phi')
             ax2[1].set_xlabel('phi')
             ax2[1].set_ylabel('theta')
-            #ax2[1].set_zlabel('phase')
 
         plt.tight_layout()
         plt.show()
@@ -168,15 +164,11 @@ class MESH:
         for l in self.getMesh():
             for e in mesh_list:
                 e.append([])
-            #psi_mesh.append([])
             for t in l:
-                #ham = hamiltonian.hamiltonian(t[0], t[1], self.getD(), self.getM())
                 ham = hamiltonian.hamiltonian(self.getN(), t[0], t[1], self.getD(), self.getM(), self.getE(), self.getR())
-                #psi_mesh[-1].append(hamiltonian.psi(ham))
                 psi_list = hamiltonian.psi(self.getN(), ham)
                 for k in range(self.getN()):
                     mesh_list[k][-1].append(psi_list[k])
-                #psi_mesh[-1].append(hamiltonian.psi(1, ham)[0])
         for k in range(self.getN()):
             mesh_list[k] = MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(mesh_list[k]), self.getDeltaTheta(), self.getDeltaPhi())
         return mesh_list
