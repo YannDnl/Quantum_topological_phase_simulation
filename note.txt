@@ -1,0 +1,11 @@
+results for m = 0:
+
+psi+ = [cos(theta/2) * e(-j * phi/2), sin(theta/2) * e(j * phi/2)]
+psi- = [- sin(theta/2) * e(-j * phi/2), cos(theta/2) * e(j * phi/2)]
+
+A_theta = 0
+A_phi = - cos(theta)/2
+
+F_theta,phi = sin(theta)/2
+
+C = 1
