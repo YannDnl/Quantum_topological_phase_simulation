@@ -160,18 +160,14 @@ class MESH:
 
     def psiMesh(self):
         '''Builds the mesh of psi plus from the angle mesh'''
-        mesh_list = [[] for _ in range(self.getN())]
+        psi_mesh = []
         for l in self.getMesh():
-            for e in mesh_list:
-                e.append([])
+            psi_mesh.append([])
             for t in l:
                 ham = hamiltonian.hamiltonian(self.getN(), t[0], t[1], self.getD(), self.getM(), self.getE(), self.getR())
-                psi_list = hamiltonian.psi(self.getN(), ham)
-                for k in range(self.getN()):
-                    mesh_list[k][-1].append(psi_list[k])
-        for k in range(self.getN()):
-            mesh_list[k] = MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(mesh_list[k]), self.getDeltaTheta(), self.getDeltaPhi())
-        return mesh_list
+                psi = hamiltonian.psi(ham)
+                psi_mesh[-1].append(psi)
+        return MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(psi_mesh), self.getDeltaTheta(), self.getDeltaPhi())
     
     def psiMeshBis(self):
         '''Builds the mesh of psi plus from the angle mesh

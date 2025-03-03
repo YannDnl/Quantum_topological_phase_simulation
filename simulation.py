@@ -10,56 +10,50 @@ importlib.reload(mesh)
 
 def plotPsi(n: int, m: list, h: list, e: list, r: float, q: int = 100, p: int = 200) -> None:
     angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh_list = angle_mesh.psiMesh()
-    for psi_mesh in psi_mesh_list:
-        psi_mesh.plot()
+    psi_mesh = angle_mesh.psiMesh()
+    psi_mesh.plot()
 
 def plotF(n: int, m: list, h: list, e: list, r: float, q: int = 100, p: int = 200) -> None:
     '''Plot the function f(theta, phi) = d_theta a_phi - d_phi a_theta'''
     angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh_list = angle_mesh.psiMesh()
-    for psi_mesh in psi_mesh_list:
-        d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
-        d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
-        a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
-        a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
-        d_theta_a_phi_mesh = a_phi_mesh.differentiate_mesh('theta')
-        d_theta_a_phi_mesh.plot()
-        d_phi_a_theta_mesh = a_theta_mesh.differentiate_mesh('phi')
-        d_phi_a_theta_mesh.plot()
-        f_mesh = d_theta_a_phi_mesh.f_mesh(d_phi_a_theta_mesh)
-        f_mesh.plot()
+    psi_mesh = angle_mesh.psiMesh()
+    d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
+    d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
+    a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
+    a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
+    d_theta_a_phi_mesh = a_phi_mesh.differentiate_mesh('theta')
+    d_theta_a_phi_mesh.plot()
+    d_phi_a_theta_mesh = a_theta_mesh.differentiate_mesh('phi')
+    d_phi_a_theta_mesh.plot()
+    f_mesh = d_theta_a_phi_mesh.f_mesh(d_phi_a_theta_mesh)
+    f_mesh.plot()
 
 def plotA(axis: str, m: float, d: float, q: int = 100, p: int = 200) -> None:
     angle_mesh = mesh.MESH(m, d, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh_list = angle_mesh.psiMesh()
-    for psi_mesh in psi_mesh_list:
-        d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
-        d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
-        if axis == 'theta':
-            a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
-            a_theta_mesh.plot()
-        elif axis == 'phi':
-            a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
-            a_phi_mesh.plot()
-        else:
-            raise ValueError('Axis must be either theta or phi')
+    psi_mesh = angle_mesh.psiMesh()
+    d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
+    d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
+    if axis == 'theta':
+        a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
+        a_theta_mesh.plot()
+    elif axis == 'phi':
+        a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
+        a_phi_mesh.plot()
+    else:
+        raise ValueError('Axis must be either theta or phi')
 
 def computeC(n: int, m: list, h: list, e: list, r: float, q: int = 100, p: int = 200):
     '''Compute the Chern number for every sphere with a given dipole, field magnitude and coupling strength'''
-    Cs = []
     angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh_list = angle_mesh.psiMesh()
-    for psi_mesh in psi_mesh_list:
-        d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
-        d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
-        a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
-        a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
-        d_theta_a_phi_mesh = a_phi_mesh.differentiate_mesh('theta')
-        d_phi_a_theta_mesh = a_theta_mesh.differentiate_mesh('phi')
-        f_mesh = d_theta_a_phi_mesh.f_mesh(d_phi_a_theta_mesh)
-        Cs.append(f_mesh.getC())
-    return Cs
+    psi_mesh = angle_mesh.psiMesh()
+    d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
+    d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
+    a_theta_mesh = psi_mesh.a_mesh(d_theta_psi_mesh)
+    a_phi_mesh = psi_mesh.a_mesh(d_phi_psi_mesh)
+    d_theta_a_phi_mesh = a_phi_mesh.differentiate_mesh('theta')
+    d_phi_a_theta_mesh = a_theta_mesh.differentiate_mesh('phi')
+    f_mesh = d_theta_a_phi_mesh.f_mesh(d_phi_a_theta_mesh)
+    return f_mesh.getC()
 
 def plotCvsM(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_points: int) -> None:
     '''Compute the Chern number for a range of ratio field magnitude, dipole and plots it'''
@@ -70,7 +64,7 @@ def plotCvsM(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_points: i
     r = 1.
     c = []
     for m in tqdm.tqdm(ms, desc='Computing Chern numbers'):
-        c.append(computeC(n, [m], h, e, r, q, p)[0])
+        c.append(computeC(n, [m], h, e, r, q, p))
     plt.plot(ms, c)
     plt.xlabel('m/d')
     plt.ylabel('C')
@@ -90,12 +84,7 @@ def plotPhase(k: int, l: int, q: int = 100, p: int = 200):
     for m in ms:
         c.append([])
         for r in tqdm.tqdm(rs, desc=f'Computing Chern numbers for M2 = {m}'):
-            v = computeC(n, [m1, m], h, e, r, q, p)
-            sum = 0
-            while len(v) != 0:
-                sum *= 2
-                sum += v.pop()
-            c[-1].append(sum)
+            c[-1].append(computeC(n, [m1, m], h, e, r, q, p))
     R, M = np.meshgrid(rs, ms)
     c = np.array(c)
 
@@ -108,4 +97,28 @@ def plotPhase(k: int, l: int, q: int = 100, p: int = 200):
     ax.set_ylabel('M2/H')
     ax.set_zlabel('C')
 
+    plt.show()
+
+def plotSingleLine(l: int, q: int = 100, p: int = 200):
+    H = 1.
+
+    n = 2
+    m1 = 1./3.
+    m2 = .1
+    h = [H for _ in range(n)]
+    e = [1 for _ in range(n)]
+    rs = np.linspace(0, 1.5 * H, l)
+    c = []
+    for r in tqdm.tqdm(rs, desc=f'Computing Chern numbers for M2 = {m2}'):
+        v = computeC(n, [m1, m2], h, e, r, q, p)
+        sum = 0
+        while len(v) != 0:
+            sum *= 2
+            sum += v.pop()
+        c.append(sum)
+    
+    plt.plot(rs, c)
+    plt.xlabel('r/H')
+    plt.ylabel('C')
+    plt.title('Chern number as a function of r/h')
     plt.show()

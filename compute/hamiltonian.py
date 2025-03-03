@@ -47,7 +47,7 @@ def hamiltonian(n: int, theta: float, phi: float, h: list, m: list, e: list, r: 
         ham += r * sig
     return -1 * ham
 
-def psi(n: int, hamiltonian: np.ndarray) -> list:
+def psi(hamiltonian: np.ndarray) -> list:
     '''Returns the list of the eigen vectors of the ground state of a given hamiltonian
     
     Args:
@@ -59,11 +59,8 @@ def psi(n: int, hamiltonian: np.ndarray) -> list:
     '''
     energies, states = np.linalg.eig(hamiltonian)
     i = np.argmax(energies)
-    Psi = states[i]
-    psis = []
-    for k in range(n):
-        psis.append(processPhase(Psi[2 * k: 2 * (k + 1)]))
-    return psis
+    Psi = processPhase_v2(states[i])
+    return Psi
 
 def processPhase(psi: np.ndarray) -> np.ndarray:
     '''Changes the complex phase of the eigenstate's components so that they are opposite
@@ -75,3 +72,14 @@ def processPhase(psi: np.ndarray) -> np.ndarray:
         np.ndarray: the eigenstate with opposite phases
     '''
     return psi * np.exp(-1j * np.sum(np.angle(psi))/2)
+
+def processPhase_v2(psi: np.ndarray) -> np.ndarray:
+    '''Changes the complex phase of the eigenstate's components so that they are opposite
+    
+    Args:
+        psi (np.ndarray): the eigenstate
+    
+    Returns:
+        np.ndarray: the eigenstate with first component real
+    '''
+    return psi * np.exp(-1j * np.angle(psi[0]))
