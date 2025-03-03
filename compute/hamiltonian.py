@@ -59,21 +59,10 @@ def psi(hamiltonian: np.ndarray) -> list:
     '''
     energies, states = np.linalg.eig(hamiltonian)
     i = np.argmax(energies)
-    Psi = processPhase_v2(states[i])
+    Psi = processPhase(states[i])
     return Psi
 
 def processPhase(psi: np.ndarray) -> np.ndarray:
-    '''Changes the complex phase of the eigenstate's components so that they are opposite
-    
-    Args:
-        psi (np.ndarray): the eigenstate
-    
-    Returns:
-        np.ndarray: the eigenstate with opposite phases
-    '''
-    return psi * np.exp(-1j * np.sum(np.angle(psi))/2)
-
-def processPhase_v2(psi: np.ndarray) -> np.ndarray:
     '''Changes the complex phase of the eigenstate's components so that they are opposite
     
     Args:

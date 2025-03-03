@@ -168,16 +168,6 @@ class MESH:
                 psi = hamiltonian.psi(ham)
                 psi_mesh[-1].append(psi)
         return MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(psi_mesh), self.getDeltaTheta(), self.getDeltaPhi())
-    
-    def psiMeshBis(self):
-        '''Builds the mesh of psi plus from the angle mesh
-        Used for debbuging'''
-        psi_mesh = []
-        for l in self.getMesh():
-            psi_mesh.append([])
-            for t in l:
-                psi_mesh[-1].append(hamiltonian.psi_bis(t[0], t[1], self.getD(), self.getM()))
-        return MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(psi_mesh), self.getDeltaTheta(), self.getDeltaPhi())
 
     def differentiate_mesh(self, axis: str):
         '''Builds the mesh of the differentiated values along axis 'axis' of the original mesh. Made for psi and A'''
