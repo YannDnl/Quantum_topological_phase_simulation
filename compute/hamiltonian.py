@@ -72,3 +72,22 @@ def processPhase(psi: np.ndarray) -> np.ndarray:
         np.ndarray: the eigenstate with first component real
     '''
     return psi * np.exp(-1j * np.angle(psi[0]))
+
+def getPsi(input) -> np.ndarray:
+    k, j, n, theta, phi, h, m, e, r = input
+    '''Returns the ground state of a system of n spheres given field and dipole magnitude and orientation
+    
+    Args:
+        n (int): number of spheres
+        theta (float): angle (latitude) of the dipole
+        phi (float): angle (longitude) of the dipole
+        h (list): magnitudes of the dipoles
+        m (list): list of the magnitudes of the fields
+        e (list): list of the relative phase of the spheres (each element is 1 or -1, standard being 1)
+        r (float): interaction strength
+    
+    Returns:
+        np.ndarray: the ground state of the system
+    '''
+    ham = hamiltonian(n, theta, phi, h, m, e, r)
+    return k, j, psi(ham)

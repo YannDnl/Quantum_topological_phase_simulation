@@ -1,5 +1,6 @@
 import copy
 import importlib
+import multiprocessing
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -167,6 +168,29 @@ class MESH:
                 ham = hamiltonian.hamiltonian(self.getN(), t[0], t[1], self.getD(), self.getM(), self.getE(), self.getR())
                 psi = hamiltonian.psi(ham)
                 psi_mesh[-1].append(psi)
+        return MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(psi_mesh), self.getDeltaTheta(), self.getDeltaPhi())
+    
+    def parallelPsiMesh(self):
+        '''Builds the mesh of psi plus from the angle mesh, parallelized
+        Actually slower than the serial version above'''
+        psi_mesh = [[None for _ in range(self.getP())] for _ in range(self.getQ())]
+
+        n = self.getN()
+        d = self.getD()
+        m = self.getM()
+        e = self.getE()
+        r = self.getR()
+
+        input = []
+        for k, l in enumerate(self.getMesh()):
+            i = [(k, j, n, t[0], t[1], d, m, e, r) for j, t in enumerate(l)]
+            input.extend(i)
+        
+        with multiprocessing.Pool(10) as pool:
+            for result in pool.imap_unordered(hamiltonian.getPsi, input):
+                k, j, psi = result
+                psi_mesh[k][j] = psi
+        
         return MESH(self.getN(), self.getM(), self.getD(), self.getE(), self.getR(), self.getThetaMin(), self.getThetaMax(), self.getPhiMin(), self.getPhiMax(), np.array(psi_mesh), self.getDeltaTheta(), self.getDeltaPhi())
 
     def differentiate_mesh(self, axis: str):
