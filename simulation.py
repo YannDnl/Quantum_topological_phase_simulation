@@ -9,16 +9,6 @@ import compute.mesh as mesh
 
 importlib.reload(mesh)
 
-def computePsi(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh = angle_mesh.psiMesh()
-    return None
-
-def computePsiParallel(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
-    psi_mesh = angle_mesh.parallelPsiMesh()
-    return None
-
 def plotPsi(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
     angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
     psi_mesh = angle_mesh.psiMesh()
@@ -92,25 +82,6 @@ def computeCSquareForParallel(args):
     n, m, h, e, r, q, p, w, v = args
     return w, v, computeC(n, m, h, e, r, q, p)
 
-def plotCvsM(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_points: int) -> None:
-    '''Compute the Chern number for a range of ratio field magnitude, dipole and plots it'''
-    n = 1
-    h = [1.]
-    ms = np.linspace(m_sur_d_min, m_sur_d_max, n_points)
-    e = [1]
-    r = np.array([[0., 0., 0.],
-                  [0., 0., 0.],
-                  [0., 0., 1.]])
-    c = []
-    #for m in tqdm.tqdm(ms, desc='Computing Chern numbers'):
-    for m in ms:
-        c.append(computeC(n, [m], h, e, r, q, p))
-    plt.plot(ms, c)
-    plt.xlabel('m/d')
-    plt.ylabel('C')
-    plt.title('Chern number as a function of m/d')
-    plt.show()
-
 def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_points: int) -> None:
     '''Compute the Chern number for a range of ratio field magnitude, dipole and plots it, parallelized
     faster than serial, 3 times'''
@@ -133,38 +104,6 @@ def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_p
     plt.xlabel('m/d')
     plt.ylabel('C')
     plt.title('Chern number as a function of m/d')
-    plt.show()
-
-def plotPhase(k: int, l: int, q: int = 100, p: int = 200):
-    H = 1.
-
-    n = 2
-    m1 = 1./3.
-    ms = np.linspace(0, H, k)
-    h = [H for _ in range(n)]
-    e = [1 for _ in range(n)]
-    rzs = np.linspace(0, 2 * H, l)
-    rs = [np.array([[0., 0., 0.],
-                    [0., 0., 0.],
-                    [0., 0., rz]]) for rz in rzs]
-    c = []
-
-    for w, m in enumerate(ms):
-        c.append([])
-        for r in tqdm.tqdm(rs, desc=f'Computing Chern numbers line {w + 1} of {k}'):
-            c[-1].append(computeC(n, [m1, m], h, e, r, q, p))
-    R, M = np.meshgrid(rzs, ms)
-    c = np.array(c)
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    ax.plot_surface(R, M, c, cmap='viridis')
-
-    ax.set_xlabel('r/H')
-    ax.set_ylabel('M2/H')
-    ax.set_zlabel('C')
-
     plt.show()
 
 def plotPhaseParallel(k: int, l: int, q: int = 100, p: int = 200):
@@ -204,27 +143,6 @@ def plotPhaseParallel(k: int, l: int, q: int = 100, p: int = 200):
     ax.set_ylabel('M2/H')
     ax.set_zlabel('C')
 
-    plt.show()
-
-def plotSingleLine(l: int, m2, q: int = 100, p: int = 200):
-    H = 1.
-
-    n = 2
-    m1 = 1./3.
-    h = [H for _ in range(n)]
-    e = [1 for _ in range(n)]
-    rzs = np.linspace(0, 2 * H, l)
-    rs = [np.array([[0., 0., 0.],
-                    [0., 0., 0.],
-                    [0., 0., rz]]) for rz in rzs]
-    c = []
-    for r in tqdm.tqdm(rs, desc=f'Computing Chern numbers'):
-        c.append(computeC(n, [m1, m2], h, e, r, q, p))
-    
-    plt.plot(rzs, c)
-    plt.xlabel('r/H')
-    plt.ylabel('C')
-    plt.title('Chern number as a function of r/h')
     plt.show()
 
 def plotSingleLineParallel(l: int, m2, q: int = 100, p: int = 200):
