@@ -1,5 +1,5 @@
 import numpy as np
-N_PROCESSES = 11
+N_PROCESSES = 9
 
 Q = 100
 P = 200

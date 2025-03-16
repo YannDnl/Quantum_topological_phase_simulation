@@ -1,0 +1,11 @@
+This code is used to compute the chern number of a system of 1 or 2 particles in a magnetic field. It does so by computing the berry gauge field and the berry curvature. 
+
+The derivatives are calculated using second order Euler method, the integral using first order Euler method. The code is parallelized for faster computing on CPU.
+
+The Quantum part is done in compute.hamiltonian.py, ie the Hamiltonian is computed and then diagonalized. The integrals and derivations are done in compute.mesh.py. Finally simulation puts it all together.
+
+The code should be run through run.py
+
+theoretical results is a note containing the theoretical results that should be obtain for a single particle with no magnetic field.
+
+theta_tilde.py plots an interesting change of variables that could be used when doing the theoretical calculations for a single sphere in a magnetic field. Showing a sharp phase transition.

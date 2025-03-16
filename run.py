@@ -20,8 +20,8 @@ m_sur_d_max = 2
 
 
 n_points = 11
-k_points = 20
-l_points = 20
+k_points = 18
+l_points = 18
 l = 10
 
 ############################################
