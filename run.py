@@ -1,12 +1,15 @@
 import simulation
 import time as t
+import numpy as np
 
 n = 2
 H = 1.
 h = [H for _ in range(n)]
 e = [1 for _ in range(n)]
 d = 1
-r = .2
+r = np.array([[0., 0., 0.],
+              [0., 0., 0.],
+              [0., 0., 1.]])
 m2 = 1./3.
 m = [m2, .3]
 m_sur_d_min = 0
@@ -14,9 +17,10 @@ m_sur_d_max = 2
 
 q = 100
 p = 200
-n_points = 101
+n_points = 11
 k_points = 5
 l_points = 5
+l = 10
 
 ############################################
 # time comparison parallel vs serial
@@ -72,8 +76,8 @@ if __name__=='__main__':
 #    c = simulation.computeC(n, m, h, e, r, q, p)
 #    print(f"Chern number: {c}")
 
-    simulation.plotCvsMParallel(m_sur_d_min, m_sur_d_max, q, p, n_points)
+#    simulation.plotCvsMParallel(m_sur_d_min, m_sur_d_max, q, p, n_points)
 
-#    simulation.plotSingleLine(l_points, m2, q, p)
+    simulation.plotSingleLineParallel(l, m2, q, p)
 
 #    simulation.plotPhaseParallel(k_points, l_points, q, p)

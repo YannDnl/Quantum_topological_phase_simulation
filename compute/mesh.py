@@ -10,7 +10,7 @@ import compute.hamiltonian as hamiltonian
 importlib.reload(hamiltonian)
 
 class MESH:
-    def __init__(self, n: int, m: list, h: list, e: list, r: float, theta_min: float, theta_max: float, phi_min: float, phi_max: float, mesh: np.ndarray = None, delta_theta: float = None, delta_phi: float = None, q: int = None, p: int = None, axis: list = []) -> None:
+    def __init__(self, n: int, m: list, h: list, e: list, r: np.ndarray, theta_min: float, theta_max: float, phi_min: float, phi_max: float, mesh: np.ndarray = None, delta_theta: float = None, delta_phi: float = None, q: int = None, p: int = None, axis: list = []) -> None:
         '''Creates an angle MESH object either from another mesh or from a map of polar space
 
         Args:
@@ -18,7 +18,7 @@ class MESH:
             m (list): magnitude of the fields
             h (list): magnitude of the dipoles (previous d)
             e (list): relative phase of the spheres (list of 1 and -1, 1 being standard)
-            r (float): strength of the coupling
+            r (np.array, 3x3): strength of the coupling
             q (int): number of points on latitude (theta)
             p (int): number of points on longitude (phi)
             theta_min (float): minimum value of latitude
@@ -32,7 +32,7 @@ class MESH:
         self.m: list = m
         self.d: list = h
         self.e: list = e
-        self.r: float = r
+        self.r: np.ndarray = r
         self.axis: list = axis
         self.theta_max: float = theta_max
         self.theta_min: float = theta_min
@@ -63,7 +63,7 @@ class MESH:
     def getE(self) -> list:
         return self.e
     
-    def getR(self) -> float:
+    def getR(self) -> np.ndarray:
         return self.r
     
     def getQ(self) -> int:

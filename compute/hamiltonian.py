@@ -14,7 +14,7 @@ def spinHamiltonian(theta: float, phi: float, d: float, m: float) -> np.ndarray:
     '''
     return -d * np.array([[-m/d + np.cos(theta), np.sin(theta) * np.exp(- 1j * phi)], [np.sin(theta) * np.exp(1j * phi), m/d - np.cos(theta)]])
 
-def hamiltonian(n: int, theta: float, phi: float, h: list, m: list, e: list, r: float) -> np.ndarray:
+def hamiltonian(n: int, theta: float, phi: float, h: list, m: list, e: list, r: np.ndarray) -> np.ndarray:
     '''Return the Hamiltonian for n spheres given field and dipole magnitude and orientation
 
     Args:
@@ -24,14 +24,27 @@ def hamiltonian(n: int, theta: float, phi: float, h: list, m: list, e: list, r: 
         h (list): magnitudes of the dipoles
         m (list): list of the magnitudes of the fields
         e (list): list of the relative phase of the spheres (each element is 1 or -1, standard being 1)
-        r (float): interaction strength
+        r (np.array, 3x3): 0:x, 1:y, 2:z, interaction strength
     
     Returns:
         np.ndarray: the spin Hamiltonian matrix'''
     ham = np.zeros((2 * n, 2 * n), dtype=np.complex128)
     i = np.eye(2)
     sigma_z = np.array([[1, 0], [0, -1]])
-    sig = 1
+    sigma_x = np.array([[0, 1], [1, 0]])
+    sigma_y = np.array([[0, -1j], [1j, 0]])
+    sig_xx = np.kron(sigma_x, sigma_x)
+    sig_yy = np.kron(sigma_y, sigma_y)
+    sig_zz = np.kron(sigma_z, sigma_z)
+    sig_xy = np.kron(sigma_x, sigma_y)
+    sig_yz = np.kron(sigma_y, sigma_z)
+    sig_zx = np.kron(sigma_z, sigma_x)
+    sig_yx = np.kron(sigma_y, sigma_x)
+    sig_xz = np.kron(sigma_x, sigma_z)
+    sig_zy = np.kron(sigma_z, sigma_y)
+    sig = [[sig_xx, sig_xy, sig_xz],
+           [sig_yx, sig_yy, sig_yz],
+           [sig_zx, sig_zy, sig_zz]]
     for k in range(n):
         h1 = e[k] * spinHamiltonian(theta, phi, -h[k], -m[k])
         operator = 1
@@ -41,10 +54,11 @@ def hamiltonian(n: int, theta: float, phi: float, h: list, m: list, e: list, r: 
         for j in range(n - k - 1):
             operator = np.kron(operator, i)
         ham += operator
-        sig = np.kron(sig, sigma_z)
-    
+
     if n != 1:
-        ham += r * sig
+        for k in range(3):
+            for l in range(3):
+                ham += r[k][l] * sig[k][l]
     return -1 * ham
 
 def psi(hamiltonian: np.ndarray) -> list:
