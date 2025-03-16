@@ -5,17 +5,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tqdm
 
+from parameters import *
 import compute.mesh as mesh
 
 importlib.reload(mesh)
 
-def plotPsi(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
+
+
+def plotPsi(n: int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int) -> None:
+    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
     psi_mesh = angle_mesh.psiMesh()
     psi_mesh.plot()
 
-def plotA(axis: str, n:int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
+def plotA(axis: str, n:int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int) -> None:
+    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
     psi_mesh = angle_mesh.psiMesh()
     d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
     d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
@@ -28,9 +31,9 @@ def plotA(axis: str, n:int, m: list, h: list, e: list, r: np.ndarray, q: int = 1
     else:
         raise ValueError('Axis must be either theta or phi')
 
-def plotF(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
+def plotF(n: int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int) -> None:
     '''Plot the function f(theta, phi) = d_theta a_phi - d_phi a_theta'''
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
+    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
     psi_mesh = angle_mesh.psiMesh()
     d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
     d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
@@ -41,9 +44,9 @@ def plotF(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int
     f_mesh = d_theta_a_phi_mesh.f_mesh(d_phi_a_theta_mesh)
     f_mesh.plot()
 
-def plotSteps(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200) -> None:
+def plotSteps(n: int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int) -> None:
     '''Plot the function f(theta, phi) = d_theta a_phi - d_phi a_theta'''
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
+    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
     psi_mesh = angle_mesh.psiMesh()
     print('psi')
     psi_mesh.plot()
@@ -61,9 +64,9 @@ def plotSteps(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p:
     print('f')
     f_mesh.plot()
 
-def computeC(n: int, m: list, h: list, e: list, r: np.ndarray, q: int = 100, p: int = 200):
+def computeC(n: int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int):
     '''Compute the Chern number for every sphere with a given dipole, field magnitude and coupling strength'''
-    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=0.001, theta_max=np.pi, phi_min=0.001, phi_max=2*np.pi)
+    angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
     psi_mesh = angle_mesh.psiMesh()
     d_theta_psi_mesh = psi_mesh.differentiate_mesh('theta')
     d_phi_psi_mesh = psi_mesh.differentiate_mesh('phi')
@@ -86,16 +89,16 @@ def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_p
     '''Compute the Chern number for a range of ratio field magnitude, dipole and plots it, parallelized
     faster than serial, 3 times'''
     n = 1
-    h = [1.]
+    h = [H]
     ms = np.linspace(m_sur_d_min, m_sur_d_max, n_points)
-    e = [1]
-    r = np.array([[0., 0., 0.], 
-                  [0., 0., 0.], 
-                  [0., 0., 1.]])
+    e = [E]
+    r = np.array([[RXX, RXY, RXZ],
+                  [RYX, RYY, RYZ],
+                  [RZX, RZY, RZZ]])
     c = [None for _ in range(n_points)]
 
     input = [(n, [m], h, e, r, q, p, k) for k, m in enumerate(ms)]
-    with multiprocessing.Pool(9) as pool:
+    with multiprocessing.Pool(N_PROCESSES) as pool:
         for result in pool.imap_unordered(computeCLineForParallel, input):
             k, c_ = result
             c[k] = c_
@@ -106,19 +109,17 @@ def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_p
     plt.title('Chern number as a function of m/d')
     plt.show()
 
-def plotPhaseParallel(k: int, l: int, q: int = 100, p: int = 200):
+def plotPhaseParallel(k: int, l: int, q: int, p: int):
     '''Faster than serial, 5 times'''
-    H = 1.
-
-    n = 2
-    m1 = 1./3.
+    n = N
+    m1 = M1
     ms = np.linspace(0, H, k)
     h = [H for _ in range(n)]
-    e = [1 for _ in range(n)]
-    rzs = np.linspace(0, 2 * H, l)
-    rs = [np.array([[0., 0., 0.],
-                    [0., 0., 0.],
-                    [0., 0., rz]]) for rz in rzs]
+    e = [E for _ in range(n)]
+    rzs = np.linspace(0, 1.5 * H, l)
+    rs = [np.array([[RXX, RXY, RXZ],
+                    [RYX, RYY, RYZ],
+                    [RZX, RZY, rz]]) for rz in rzs]
     c = [[None for _ in range(l)] for _ in range(k)]
 
     input = []
@@ -126,8 +127,8 @@ def plotPhaseParallel(k: int, l: int, q: int = 100, p: int = 200):
         i = [(n, [m1, m], h, e, r, q, p, w, v) for v, r in enumerate(rs)]
         input.extend(i)
 
-    with multiprocessing.Pool(9) as pool:
-        for result in pool.imap_unordered(computeCSquareForParallel, input):
+    with multiprocessing.Pool(N_PROCESSES) as pool:
+        for result in tqdm.tqdm(pool.imap_unordered(computeCSquareForParallel, input), total = k * l):
             w, v, c_ = result
             c[w][v] = c_
 
@@ -145,23 +146,20 @@ def plotPhaseParallel(k: int, l: int, q: int = 100, p: int = 200):
 
     plt.show()
 
-def plotSingleLineParallel(l: int, m2, q: int = 100, p: int = 200):
-    H = 1.
-
-    n = 2
-    m1 = 1./3.
+def plotSingleLineParallel(l: int, m2, q: int, p: int):
+    n = N
+    m1 = M1
     h = [H for _ in range(n)]
-    e = [1 for _ in range(n)]
+    e = [E for _ in range(n)]
     rzs = np.linspace(0, 2 * H, l)
-    rs = [np.array([[0.1, 0., 0.],
-                    [0., 0.1, 0.],
-                    [0., 0., rz]]) for rz in rzs]
-    
+    rs = [np.array([[RXX, RXY, RXZ],
+                    [RYX, RYY, RYZ],
+                    [RZX, RZY, rz]]) for rz in rzs]
     c = [None for _ in range(l)]
 
     input = [(n, [m1, m2], h, e, r, q, p, k) for k, r in enumerate(rs)]
 
-    with multiprocessing.Pool(9) as pool:
+    with multiprocessing.Pool(N_PROCESSES) as pool:
         for result in pool.imap_unordered(computeCLineForParallel, input):
             k, c_ = result
             c[k] = c_

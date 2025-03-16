@@ -2,24 +2,26 @@ import simulation
 import time as t
 import numpy as np
 
-n = 2
-H = 1.
+from parameters import *
+
+q = Q
+p = P
+n = N
 h = [H for _ in range(n)]
-e = [1 for _ in range(n)]
+e = [E for _ in range(n)]
 d = 1
-r = np.array([[0., 0., 0.],
-              [0., 0., 0.],
-              [0., 0., 1.]])
-m2 = 1./3.
+r = np.array([[RXX, RXY, RXZ],
+              [RYX, RYY, RYZ],
+              [RZX, RZY, RZZ]])
+m2 = M1
 m = [m2, .3]
 m_sur_d_min = 0
 m_sur_d_max = 2
 
-q = 100
-p = 200
+
 n_points = 11
-k_points = 5
-l_points = 5
+k_points = 20
+l_points = 20
 l = 10
 
 ############################################
@@ -78,6 +80,6 @@ if __name__=='__main__':
 
 #    simulation.plotCvsMParallel(m_sur_d_min, m_sur_d_max, q, p, n_points)
 
-    simulation.plotSingleLineParallel(l, m2, q, p)
+#    simulation.plotSingleLineParallel(l, m2, q, p)
 
-#    simulation.plotPhaseParallel(k_points, l_points, q, p)
+    simulation.plotPhaseParallel(k_points, l_points, q, p)
