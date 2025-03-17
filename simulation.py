@@ -10,7 +10,9 @@ import compute.mesh as mesh
 
 importlib.reload(mesh)
 
-
+def theoreticalC(m: float, d: float) -> float:
+    '''Return the theoretical Chern number for a given field and dipole magnitude'''
+    return (np.sign(1 - m/d) + 1)/2
 
 def plotPsi(n: int, m: list, h: list, e: list, r: np.ndarray, q: int, p: int) -> None:
     angle_mesh = mesh.MESH(n, m, h, e, r, q = q, p = p, theta_min=THETA_MIN, theta_max=THETA_MAX, phi_min=PHI_MIN, phi_max=PHI_MAX)
@@ -91,6 +93,8 @@ def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_p
     n = 1
     h = [H]
     ms = np.linspace(m_sur_d_min, m_sur_d_max, n_points)
+    ts = np.linspace(m_sur_d_min, m_sur_d_max, 1001)
+    theory = (np.array([np.sign(1 - t) for t in ts]) + 1)/2
     e = [E]
     r = np.array([[RXX, RXY, RXZ],
                   [RYX, RYY, RYZ],
@@ -103,10 +107,11 @@ def plotCvsMParallel(m_sur_d_min: float, m_sur_d_max: float, q: int, p: int, n_p
             k, c_ = result
             c[k] = c_
 
-    plt.scatter(ms, c, marker='+')
+    plt.scatter(ms, c, marker='+', label='Simulation')
+    plt.plot(ts, theory, color='red', linestyle='--', linewidth = .8, label='Theory')
     plt.xlabel('m/d')
     plt.ylabel('C')
-    plt.title('Chern number as a function of m/d')
+    plt.legend()
     plt.show()
 
 def plotPhaseParallel(k: int, l: int, q: int, p: int):

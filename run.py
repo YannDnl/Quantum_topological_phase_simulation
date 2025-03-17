@@ -19,10 +19,10 @@ m_sur_d_min = 0
 m_sur_d_max = 2
 
 
-n_points = 11
+n_points = 101
 k_points = 18
 l_points = 18
-l = 10
+l = 100
 
 ############################################
 # time comparison parallel vs serial
@@ -80,6 +80,6 @@ if __name__=='__main__':
 
 #    simulation.plotCvsMParallel(m_sur_d_min, m_sur_d_max, q, p, n_points)
 
-#    simulation.plotSingleLineParallel(l, m2, q, p)
+    simulation.plotSingleLineParallel(l, m2, q, p)
 
-    simulation.plotPhaseParallel(k_points, l_points, q, p)
+#    simulation.plotPhaseParallel(k_points, l_points, q, p)

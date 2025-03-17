@@ -14,11 +14,11 @@ H = 1.
 E = 1
 M1 = 1./3.
 
-RXX = .1
+RXX = 0.1
 RXY = 0.
 RXZ = 0.
 RYX = 0.
-RYY = .1
+RYY = 0.1
 RYZ = 0.
 RZX = 0.
 RZY = 0.
